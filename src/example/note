@@ -1,0 +1,95 @@
+1. Pattern Matching for instanceof: 16
+Pattern matching involves testing whether an object has a particular structure,
+then extracting data from that object if there's a match.
+You can already do this with Java; however,
+pattern matching introduces new language enhancements
+that enable you to conditionally extract data from objects with code that's more concise and robust.
+
+More specifically, JDK 15 extends the instanceof operator: you can specify a binding variable;
+if the result of the instanceof operator is true, then the object being tested is assigned to the binding variable.
+
+2. Sealead Class:  15
+To seal a class, add the sealed modifier to its declaration. Then, after any extends and implements clauses,
+add the permits clause. This clause specifies the classes that may extend the sealed class.
+
+Purpose:
+Sealed class is used to stop a class to be inherited.
+You cannot derive or extend any class from it.
+Sealed method is implemented so that no other class can overthrow it
+and implement its own method.
+The main purpose of the sealed class is to withdraw the inheritance
+attribute from the user so that they can’t attain a class from a sealed class.
+Sealed classes are used best when you have a class with static members.
+
+advantage:
+Sealed classes work well with the following:
+Java Reflection API
+Java Records
+Pattern Matching
+
+Note:
+Alternatively, you can define permitted subclasses in the same file as the sealed class.
+If you do so, then you can omit the permits clause:
+
+Constraints on Permitted Subclasses
+Permitted subclasses have the following constraints:
+All the permitted subclasses must belong to the same module or package as the sealed class
+They must be accessible by the sealed class at compile time.
+For example, to compile Shape.java, the compiler must be able to access all of the permitted classes of Shape: Circle.java, Square.java, and Rectangle.java. In addition, because Rectangle is a sealed class, the compiler also needs access to FilledRectangle.java.
+They must directly extend the sealed class.
+They must have exactly one of the following modifiers to describe how it continues the sealing initiated by its superclass:
+final: Cannot be extended further
+sealed: Can only be extended by its permitted subclasses
+non-sealed: Can be extended by unknown subclasses; a sealed class cannot prevent its permitted subclasses from doing this
+For example, the permitted subclasses of Shape demonstrate each of these three modifiers: Circle is final while Rectangle is sealed and Square is non-sealed.
+They must be in the same module as the sealed class (if the sealed class is in a named module) or in the same package (if the sealed class is in the unnamed module, as in the Shape.java example).
+
+3. Records: 14
+
+Like enum, record is also a special class type in Java. It is mostly to be used in places
+where a class is created only to act as plain data carrier.
+The important difference between class and record is that a record aims to eliminate all
+the boilerplate code needed to set and get the data from instance.
+Records transfer this responsibility to java compiler which generates the constructor,
+field getters, hashCode() and equals() as well toString() methods.
+We can override any of default provided above methods in record definition to implement custom behavior.
+
+A constructor accepting all fields.
+The toString() method which prints the state/values of all fields in the record.
+The equals() and hashCode() methods using an invokedynamic based mechanism.
+The getter methods whose names are similar to field names i.e. id(), firstName(), lastName(), email() and age().
+The class extends java.lang.Record, which is the base class for all records. It means a record cannot extend other classes.
+The class is marked final, which means we cannot create a subclass of it.
+It does not have any setter method which means a record instance is designed to be immutable.
+
+When we should use records
+Records are ideal candidate when modeling things like domain model classes
+(potentially to be persisted via ORM), or data transfer objects (DTOs).
+The records are useful when storing data temporarily.
+As example can be during JSON deserialization.
+Generally during deserialization, we do not expect the program to mutate data read from JSON. We just read the data and pass it to data processor or validator.
+Also, records are not replacement for mutable Java beans because a record, by design, is immutable.
+Use records when a class is intended to hold the data for some time and we want to avoid writing lots of boilerplate code.
+We can use records in variety of other situations e.g. hold multiple return values from a method, stream joins, compound keys and in data-structure such as tree nodes.
+
+Cannot subclass Record explicitly
+Though all records extend java.lang.Record class,
+still we cannot create a subclass of java.lang.Record explicitly. The compiler will not pass through.
+1. we can perform Serialization
+2. Additional fields and methods.
+3. we can add annotation to the components of a record, which are applicable to them.
+  For example, we can apply @Transient annotation to the id field.
+
+Added annotation
+public record EmployeeRecord(
+    @Transient Long id,
+    String firstName,
+    String lastName,
+    String email,
+    int age)
+{
+  //
+}
+
+Rahul chauhan Noida
+
